@@ -8,21 +8,32 @@
 
 namespace Helper;
 
+include_once(dirname(__FILE__) . "/Helper.php");
+
 class Account {
     private $_pdo;
     private $_crud;
+    private $_helper;
 
     public function __CONSTRUCT(){
         $this->_pdo = $GLOBALS["pdo"];
         $this->_crud = new Crud($this->_pdo);
+        $this->_helper = new Helper();
     }
 
-    public function signIn($table, array $elms){
+    public function signIn($table, array $elms, $output = false){
         $this->_crud->setTable($table);
         $this->_crud->setElms(array("*"));
+        $infos = $this->_crud->read($elms);
 
-        if($this->_crud->read($elms)){
-            return true;
+        if(!empty($infos)){
+            if(!$output){
+                return true;
+            }
+            else{
+                return $infos;
+            }
+
         }
         else{
             return false;
